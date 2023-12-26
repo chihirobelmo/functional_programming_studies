@@ -12,7 +12,7 @@ namespace ValidationCombined
 			Func<string, bool> IsMatch(string pattern) => (string input) => Regex.IsMatch(input, pattern);
 			Func<string, bool> IsInclude(string pattern) => (string input) => input.Contains(pattern);
 
-			Func<string, bool> CreateValidation(Func<string, bool> validate, Action showMessage) => (string input) => 
+			Func<Action, Func<string, bool>> CreateValidation(Func<string, bool> validate) => (Action showMessage) => (string input) => 
 			{
 				bool isMatch = validate(input);
 				if (isMatch) showMessage();
@@ -23,9 +23,9 @@ namespace ValidationCombined
 
 			bool match = new List<Func<string, bool>>
 			{
-				CreateValidation(IsMatch("[a-z|A-Z]"), ()=>Console.WriteLine("Alphabet Exists")),
-				CreateValidation(IsMatch("[0-9]"), ()=>Console.WriteLine("Number Exists")),
-				CreateValidation(IsInclude("Oshii"), ()=>Console.WriteLine("He is Mamoru"))
+				CreateValidation(IsMatch("[a-z|A-Z]"))(()=>Console.WriteLine("Alphabet Exists")),
+				CreateValidation(IsMatch("[0-9]"))(()=>Console.WriteLine("Number Exists")),
+				CreateValidation(IsInclude("Oshii"))(()=>Console.WriteLine("He is Mamoru")),
 			}
 			.Aggregate(false, (any, validate) => any |= validate(userName));
 
